@@ -6,6 +6,8 @@ public class GamePiece : MonoBehaviour
   public int xIndex;
   public int yIndex;
 
+  bool isMoving = false;
+
   void Start()
   {
 
@@ -14,9 +16,9 @@ public class GamePiece : MonoBehaviour
   void Update()
   {
     if (Input.GetKeyDown(KeyCode.RightArrow))
-      Move((int)transform.position.x + 1, (int)transform.position.y, 1);
+      Move((int)transform.position.x + 2, (int)transform.position.y, 0.5f);
     if (Input.GetKeyDown(KeyCode.LeftArrow))
-      Move((int)transform.position.x - 1, (int)transform.position.y, 1);
+      Move((int)transform.position.x - 2, (int)transform.position.y, 0.5f);
   }
 
   public void SetCoord(int x, int y)
@@ -27,11 +29,13 @@ public class GamePiece : MonoBehaviour
 
   public void Move(int xDest, int yDest, float timeToMove)
   {
-    StartCoroutine(MoveRutine(new Vector3(xDest, yDest, 0), timeToMove));
+    if(!isMoving)
+      StartCoroutine(MoveRutine(new Vector3(xDest, yDest, 0), timeToMove));
   }
 
   IEnumerator MoveRutine(Vector3 destination, float timeToMove)
   {
+    isMoving = true;
     Vector3 startPosition = transform.position;
     bool reachedDestination = false;
     float elapsedTime = 0;
@@ -42,10 +46,19 @@ public class GamePiece : MonoBehaviour
       {
         reachedDestination = true;
         transform.position = destination;
+        SetCoord((int)destination.x, (int)destination.y);
+        isMoving = false;
+        break;
       }
 
       elapsedTime += Time.deltaTime;
       float t = Mathf.Clamp(elapsedTime / timeToMove, 0, 1);
+
+      //t = Mathf.Sin(t * Mathf.PI * 0.5f);
+      //t = 1 - Mathf.Cos(t * Mathf.PI * 0.5f);
+      //t *= t;
+      t = t * t * (3 - 2 * t);
+
 
       transform.position =  Vector3.Lerp(startPosition, destination, t);
       yield return null;
