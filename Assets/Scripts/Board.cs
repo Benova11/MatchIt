@@ -26,6 +26,7 @@ public class Board : MonoBehaviour
         GameObject tile = Instantiate(tilePrefab, new Vector3(i, j, 0), Quaternion.identity, transform);
         tile.name = "Tile (" + i + "," + j + ")";
         m_allTiles[i, j] = tile.GetComponent<Tile>();
+        m_allTiles[i, j].Init(i, j, this);
       }
     }
   }
