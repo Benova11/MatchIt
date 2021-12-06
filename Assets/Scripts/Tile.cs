@@ -7,16 +7,28 @@ public class Tile : MonoBehaviour
 
   Board motherBoard;
 
+  [SerializeField] SpriteRenderer spriteRenderer;
+
   void Start()
   {
-
+    SetAlphaValue(0);
   }
 
-  public void Init(int x,int y, Board board)
+  void Update()
+  {
+    if (Input.GetKeyDown(KeyCode.T))
+      SetAlphaValue(spriteRenderer.color.a == 0 ? 255 : 0);
+  }
+
+  public void Init(int x, int y, Board board)
   {
     xIndex = x;
     yIndex = y;
     motherBoard = board;
   }
 
+  public void SetAlphaValue(float newValue)
+  {
+    spriteRenderer.color = new Color(255, 255, 255, newValue);
+  }
 }
