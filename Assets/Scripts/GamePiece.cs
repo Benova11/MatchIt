@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class GamePiece : MonoBehaviour
 {
+  public enum InterpType { Linear, EaseOut, EaseIn, SmoothStep, SmootherStep }
+  public InterpType interpulation = InterpType.SmootherStep;
+
   public int xIndex;
   public int yIndex;
 
@@ -29,7 +32,7 @@ public class GamePiece : MonoBehaviour
 
   public void Move(int xDest, int yDest, float timeToMove)
   {
-    if(!isMoving)
+    if (!isMoving)
       StartCoroutine(MoveRutine(new Vector3(xDest, yDest, 0), timeToMove));
   }
 
@@ -53,16 +56,32 @@ public class GamePiece : MonoBehaviour
 
       elapsedTime += Time.deltaTime;
       float t = Mathf.Clamp(elapsedTime / timeToMove, 0, 1);
+      AdjustInterpulationByType(t);
 
-      //t = Mathf.Sin(t * Mathf.PI * 0.5f);
-      //t = 1 - Mathf.Cos(t * Mathf.PI * 0.5f);
-      //t *= t;
-      t = t * t * (3 - 2 * t);
-
-
-      transform.position =  Vector3.Lerp(startPosition, destination, t);
+      transform.position = Vector3.Lerp(startPosition, destination, t);
       yield return null;
     }
   }
 
+  float AdjustInterpulationByType(float t)
+  {
+    switch (interpulation)
+    {
+      case InterpType.Linear:
+        break;
+      case InterpType.EaseOut:
+        t = Mathf.Sin(t * Mathf.PI * 0.5f);
+        break;
+      case InterpType.EaseIn:
+        t = 1 - Mathf.Cos(t * Mathf.PI * 0.5f);
+        break;
+      case InterpType.SmoothStep:
+        t = t * t * (3 - 2 * t);
+        break;
+      case InterpType.SmootherStep:
+        t = t * t * t * (t * (t * 6 - 15) + 10);
+        break;
+    }
+    return t;
+  }
 }
