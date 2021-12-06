@@ -7,12 +7,15 @@ public class Board : MonoBehaviour
   [SerializeField] int borderSize;
 
   [SerializeField] GameObject tilePrefab;
+  public GameObject[] gamePiecePrefabs;
 
   Tile[,] m_allTiles;
+  GamePiece[,] m_allGamePieces;
 
   void Start()
   {
     SetupTiles();
+    m_allGamePieces = new GamePiece[width,height];
     SetCameraSize();
   }
 
