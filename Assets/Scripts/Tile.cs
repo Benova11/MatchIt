@@ -31,4 +31,22 @@ public class Tile : MonoBehaviour
   {
     spriteRenderer.color = new Color(255, 255, 255, newValue);
   }
+
+  void OnMouseDown()
+  {
+    if(motherBoard!=null)
+      motherBoard.ClickTile(this);
+  }
+
+  void OnMouseEnter()
+  {
+    if (motherBoard != null)
+      motherBoard.DragToTile(this);
+  }
+
+  void OnMouseUp()
+  {
+    if (motherBoard != null)
+      motherBoard.ReleaseTile();
+  }
 }

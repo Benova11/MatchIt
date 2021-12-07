@@ -12,6 +12,9 @@ public class Board : MonoBehaviour
   Tile[,] m_allTiles;
   GamePiece[,] m_allGamePieces;
 
+  Tile clickedTile;
+  Tile targetTile;
+
   void Start()
   {
     SetupTiles();
@@ -82,5 +85,39 @@ public class Board : MonoBehaviour
         }
       }
     }
+  }
+
+  public void ClickTile(Tile tile)
+  {
+    if (clickedTile == null)
+    {
+      clickedTile = tile;
+      Debug.Log($"clicked tile: {tile.name}");
+    }
+  }
+
+  public void DragToTile(Tile tile)
+  {
+    if (clickedTile != null)
+      targetTile = tile;
+  }
+
+  public void ReleaseTile()
+  {
+    if (clickedTile != null && targetTile != null)
+    {
+      SwitchTiles(clickedTile, targetTile);
+    }
+    clickedTile = null;
+    targetTile = null;
+
+  }
+
+  void SwitchTiles(Tile clickedTile, Tile targetTile)
+  {
+    //todo
+
+    //clickedTile = null;
+    //targetTile = null;
   }
 }
