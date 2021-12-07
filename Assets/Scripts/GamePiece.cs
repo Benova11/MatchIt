@@ -9,6 +9,8 @@ public class GamePiece : MonoBehaviour
   public int xIndex;
   public int yIndex;
 
+  Board motherBoard;
+
   bool isMoving = false;
 
   void Start()
@@ -22,6 +24,11 @@ public class GamePiece : MonoBehaviour
     //  Move((int)transform.position.x + 2, (int)transform.position.y, 0.5f);
     //if (Input.GetKeyDown(KeyCode.LeftArrow))
     //  Move((int)transform.position.x - 2, (int)transform.position.y, 0.5f);
+  }
+
+  public void Init(Board board)
+  {
+    motherBoard = board;
   }
 
   public void SetCoord(int x, int y)
@@ -48,8 +55,8 @@ public class GamePiece : MonoBehaviour
       if (Vector3.Distance(transform.position, destination) < 0.01f)
       {
         reachedDestination = true;
-        transform.position = destination;
-        SetCoord((int)destination.x, (int)destination.y);
+        if (motherBoard != null)
+          motherBoard.PlaceGamePiece(this, (int)destination.x, (int)destination.y); 
         isMoving = false;
         break;
       }

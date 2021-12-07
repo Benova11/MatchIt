@@ -9,8 +9,10 @@ public class Board : MonoBehaviour
   [SerializeField] GameObject tilePrefab;
   public GameObject[] gamePiecePrefabs;
 
-  Tile[,] m_allTiles;
-  GamePiece[,] m_allGamePieces;
+  [SerializeField] float swapTime = 0.25f;
+
+  Tile[,] allTiles;
+  GamePiece[,] allGamePieces;
 
   Tile clickedTile;
   Tile targetTile;
@@ -18,22 +20,22 @@ public class Board : MonoBehaviour
   void Start()
   {
     SetupTiles();
-    m_allGamePieces = new GamePiece[width, height];
+    allGamePieces = new GamePiece[width, height];
     SetCameraSize();
     FillBoardRandomly();
   }
 
   void SetupTiles()
   {
-    m_allTiles = new Tile[width, height];
+    allTiles = new Tile[width, height];
     for (int i = 0; i < width; i++)
     {
       for (int j = 0; j < height; j++)
       {
         GameObject tile = Instantiate(tilePrefab, new Vector3(i, j, 0), Quaternion.identity, transform);
         tile.name = "Tile (" + i + "," + j + ")";
-        m_allTiles[i, j] = tile.GetComponent<Tile>();
-        m_allTiles[i, j].Init(i, j, this);
+        allTiles[i, j] = tile.GetComponent<Tile>();
+        allTiles[i, j].Init(i, j, this);
       }
     }
   }
@@ -59,7 +61,7 @@ public class Board : MonoBehaviour
     return gamePiecePrefabs[randomIdx];
   }
 
-  void PlaceGamePiece(GamePiece gamePiece, int x, int y)
+  public void PlaceGamePiece(GamePiece gamePiece, int x, int y)
   {
     if (gamePiece == null)
     {
@@ -69,6 +71,8 @@ public class Board : MonoBehaviour
 
     gamePiece.transform.position = new Vector3(x, y, 0);
     gamePiece.transform.rotation = Quaternion.identity;
+    if(IsPlacementAutorized(x,y))
+      allGamePieces[x, y] = gamePiece;
     gamePiece.SetCoord(x, y);
   }
 
@@ -81,6 +85,8 @@ public class Board : MonoBehaviour
         GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity);
         if (randomPiece != null)
         {
+          randomPiece.GetComponent<GamePiece>().Init(this);
+          randomPiece.transform.SetParent(transform);
           PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), i, j);
         }
       }
@@ -92,7 +98,7 @@ public class Board : MonoBehaviour
     if (clickedTile == null)
     {
       clickedTile = tile;
-      Debug.Log($"clicked tile: {tile.name}");
+      //Debug.Log($"clicked tile: {tile.name}");
     }
   }
 
@@ -106,18 +112,33 @@ public class Board : MonoBehaviour
   {
     if (clickedTile != null && targetTile != null)
     {
-      SwitchTiles(clickedTile, targetTile);
+      SwitchTilesPieces(clickedTile, targetTile);
     }
     clickedTile = null;
     targetTile = null;
 
   }
 
-  void SwitchTiles(Tile clickedTile, Tile targetTile)
+  void SwitchTilesPieces(Tile clickedTile, Tile targetTile)
   {
-    //todo
+    if(IsPiecesAdjecent(clickedTile,targetTile))
+    {
+      GamePiece clickedPiece = allGamePieces[clickedTile.xIndex, clickedTile.yIndex];
+      GamePiece targetPiece = allGamePieces[targetTile.xIndex, targetTile.yIndex];
 
-    //clickedTile = null;
-    //targetTile = null;
+      clickedPiece.Move(targetTile.xIndex, targetTile.yIndex, swapTime);
+      targetPiece.Move(clickedTile.xIndex, clickedTile.yIndex, swapTime);
+    }
+  }
+
+  bool IsPiecesAdjecent(Tile tileA, Tile tileB)
+  {
+    return (Mathf.Abs(tileA.xIndex - tileB.xIndex) <= 1 && tileA.yIndex == tileB.yIndex)
+        || (Mathf.Abs(tileA.yIndex - tileB.yIndex) <= 1 && tileA.xIndex == tileB.xIndex);
+  }
+
+  bool IsPlacementAutorized(int x, int y)
+  {
+    return (x >= 0 && x < width && y >= 0 && y < height);
   }
 }

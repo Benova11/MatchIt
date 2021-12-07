@@ -34,7 +34,7 @@ public class Tile : MonoBehaviour
 
   void OnMouseDown()
   {
-    if(motherBoard!=null)
+    if(motherBoard != null)
       motherBoard.ClickTile(this);
   }
 
