@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Board : MonoBehaviour
@@ -71,7 +72,7 @@ public class Board : MonoBehaviour
 
     gamePiece.transform.position = new Vector3(x, y, 0);
     gamePiece.transform.rotation = Quaternion.identity;
-    if(IsPlacementAutorized(x,y))
+    if(IsWithinBoardBounds(x,y))
       allGamePieces[x, y] = gamePiece;
     gamePiece.SetCoord(x, y);
   }
@@ -131,13 +132,50 @@ public class Board : MonoBehaviour
     }
   }
 
+  List<GamePiece> FindMatches(int startX, int startY,Vector2 searchDirection, int minLength = 3)
+  {
+    List<GamePiece> matches = new List<GamePiece>();
+    GamePiece startPiece = null;
+
+    if (IsWithinBoardBounds(startX, startY))
+      startPiece = allGamePieces[startX, startY];
+
+    if (startPiece != null)
+      matches.Add(startPiece);
+    else return null;
+
+    int nextX;
+    int nextY;
+
+    int maxValue = (width > height) ? width : height;
+
+    for(int i=0; i< maxValue - 1; i++)
+    {
+      nextX = startX + (int)Mathf.Clamp(searchDirection.x, -1, 1) * i;
+      nextY = startY + (int)Mathf.Clamp(searchDirection.y, -1, 1) * i;
+
+      if (!IsWithinBoardBounds(nextX, nextY))
+        break;
+
+      GamePiece nextGamePiece = allGamePieces[nextX, nextY];
+
+      if (nextGamePiece.matchValue == startPiece.matchValue && !matches.Contains(nextGamePiece))
+        matches.Add(nextGamePiece);
+      else break;
+    }
+
+    if (matches.Count >= minLength)
+      return matches;
+    return null;
+  }
+
   bool IsPiecesAdjecent(Tile tileA, Tile tileB)
   {
     return (Mathf.Abs(tileA.xIndex - tileB.xIndex) <= 1 && tileA.yIndex == tileB.yIndex)
         || (Mathf.Abs(tileA.yIndex - tileB.yIndex) <= 1 && tileA.xIndex == tileB.xIndex);
   }
 
-  bool IsPlacementAutorized(int x, int y)
+  bool IsWithinBoardBounds(int x, int y)
   {
     return (x >= 0 && x < width && y >= 0 && y < height);
   }

@@ -4,7 +4,10 @@ using UnityEngine;
 public class GamePiece : MonoBehaviour
 {
   public enum InterpType { Linear, EaseOut, EaseIn, SmoothStep, SmootherStep }
+  public enum MatchValue { Yellow,Blue,Magenta,Indigo,Green,Teal,Red,Cyan,Wild}
+
   public InterpType interpulation = InterpType.SmootherStep;
+  public MatchValue matchValue = MatchValue.Yellow;
 
   public int xIndex;
   public int yIndex;
@@ -12,19 +15,6 @@ public class GamePiece : MonoBehaviour
   Board motherBoard;
 
   bool isMoving = false;
-
-  void Start()
-  {
-
-  }
-
-  void Update()
-  {
-    //if (Input.GetKeyDown(KeyCode.RightArrow))
-    //  Move((int)transform.position.x + 2, (int)transform.position.y, 0.5f);
-    //if (Input.GetKeyDown(KeyCode.LeftArrow))
-    //  Move((int)transform.position.x - 2, (int)transform.position.y, 0.5f);
-  }
 
   public void Init(Board board)
   {
