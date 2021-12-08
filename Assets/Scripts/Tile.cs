@@ -17,7 +17,7 @@ public class Tile : MonoBehaviour
   void Update()
   {
     if (Input.GetKeyDown(KeyCode.T))
-      SetAlphaValue(spriteRenderer.color.a == 0 ? 255 : 0);
+      SetAlphaValue(spriteRenderer.color.a == 0 ? 1 : 0);
   }
 
   public void Init(int x, int y, Board board)
@@ -29,7 +29,9 @@ public class Tile : MonoBehaviour
 
   public void SetAlphaValue(float newValue)
   {
-    spriteRenderer.color = new Color(255, 255, 255, newValue);
+    if (spriteRenderer.color.r == 1 && spriteRenderer.color.g == 1 && spriteRenderer.color.b == 1 && newValue == 1)
+      newValue = 0.5f;
+    spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, newValue);
   }
 
   void OnMouseDown()

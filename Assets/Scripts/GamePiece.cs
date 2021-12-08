@@ -48,8 +48,7 @@ public class GamePiece : MonoBehaviour
         if (motherBoard != null)
           motherBoard.PlaceGamePiece(this, (int)destination.x, (int)destination.y); 
         isMoving = false;
-        break;
-      }
+       }
 
       elapsedTime += Time.deltaTime;
       float t = Mathf.Clamp(elapsedTime / timeToMove, 0, 1);
